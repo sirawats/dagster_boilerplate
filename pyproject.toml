@@ -1,0 +1,9 @@
+[project]
+name = "cro_data_pipeline"
+version = "0.1"
+description = ""
+authors = [{ name = "Sirawat S.", email = "ohsirawat@gmail.com" }]
+dependencies = ["pandas>=2.2.0", "dagster>=1.6.2"]
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }

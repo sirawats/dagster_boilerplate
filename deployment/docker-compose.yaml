@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: postgis
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dagster
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+      - ./database_volume:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      TZ: Asia/Bangkok
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+  dagster_webserver:
+    image: dagster_webserver
+    build:
+      context: ./..
+      dockerfile: ./deployment/Dockerfile
+    entrypoint:
+      - bash
+      - -c
+      - "dagster-webserver -h 0.0.0.0 -p 3000 -w workspace.yaml"
+    container_name: dagster_webserver
+    restart: always
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: Asia/Bangkok
+      DAGSTER_POSTGRES_USER: postgres
+      DAGSTER_POSTGRES_PASSWORD: postgres
+      DAGSTER_POSTGRES_DB: dagster
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ../src/data_pipeline:/opt/dagster/app/data_pipeline
+      - ../src/dagster_entry:/opt/dagster/app/dagster_entry
+      - $HOME/dagster_io_manager_storage:/opt/dagster/io_manager_storage
+    depends_on:
+      - postgis
+
+  dagster_daemon:
+    image: dagster_webserver
+    entrypoint:
+      - bash
+      - -c
+      - "dagster-daemon run -w workspace.yaml"
+    container_name: docker_daemon
+    restart: always
+    environment:
+      TZ: Asia/Bangkok
+      DAGSTER_POSTGRES_USER: postgres
+      DAGSTER_POSTGRES_PASSWORD: postgres
+      DAGSTER_POSTGRES_DB: dagster
+      # Database for executing user code
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_HOST: postgis
+      DB_PORT: 5432
+      DB_NAME: dagster
+      DB_SCHEMA: public
+    volumes:
+      # Make docker client accessible so we can launch containers using host docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ../src/data_pipeline:/opt/dagster/app/data_pipeline
+      - ../src/dagster_entry:/opt/dagster/app/dagster_entry
+      - $HOME/dagster_io_manager_storage:/opt/dagster/io_manager_storage
+    depends_on:
+      - postgis
+
+volumes:
+  pgadmin-data:

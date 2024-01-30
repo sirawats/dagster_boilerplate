@@ -1,0 +1,27 @@
+storage:
+  postgres:
+    postgres_db:
+      username: postgres
+      password: postgres
+      hostname: postgis
+      db_name: dagster
+      port: 5432
+
+local_artifact_storage:
+  module: dagster.core.storage.root
+  class: LocalArtifactStorage
+  config:
+    base_dir: "/opt/dagster/local/"
+
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+  config:
+    max_concurrent_runs: 32
+    tag_concurrency_limits:
+      - key: "concurrency_limit"
+        value: "5" # applies when the `database` tag has a value of `redshift`
+        limit: 5
+
+telemetry:
+  enabled: false
