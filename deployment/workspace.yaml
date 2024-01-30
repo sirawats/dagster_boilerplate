@@ -1,3 +1,7 @@
 load_from:
   # Each entry here corresponds to a service in the docker-compose file that exposes user code.
+  - grpc_server:
+      host: 172.16.101.13
+      port: 4200
+      # location_name: "individual_pipeline"
   - python_module: dagster_entry
