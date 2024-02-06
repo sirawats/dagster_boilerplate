@@ -3,7 +3,14 @@ name = "cro_data_pipeline"
 version = "0.1"
 description = ""
 authors = [{ name = "Sirawat S.", email = "ohsirawat@gmail.com" }]
-dependencies = ["pandas>=2.2.0", "dagster>=1.6.2"]
+dependencies = [
+    "pandas>=2.2.0",
+    "dagster>=1.6.3",
+    "dagster-webserver>=1.6.3",
+    "dagster-graphql>=1.6.3",
+    "dagster-postgres>=0.22.3",
+    "dagster-aws>=0.22.3",
+]
 requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "MIT" }

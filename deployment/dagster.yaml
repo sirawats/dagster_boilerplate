@@ -7,6 +7,14 @@ storage:
       db_name: dagster
       port: 5432
 
+# # Keep logs in S3
+# compute_logs:
+#   module: dagster_aws.s3.compute_log_manager
+#   class: S3ComputeLogManager
+#   config:
+#     bucket: <bucket-name>
+#     prefix: <prefix>
+
 local_artifact_storage:
   module: dagster.core.storage.root
   class: LocalArtifactStorage
