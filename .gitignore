@@ -3,6 +3,9 @@
 db/
 database_volume/
 
+# Dagster
+dagster_io_manager_storage
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

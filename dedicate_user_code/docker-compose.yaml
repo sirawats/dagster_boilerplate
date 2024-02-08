@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  dagster_dedicated_user_code: # [To Edit] Code location name
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dagster_dedicated_user_code # [To Edit] Code location name
+    restart: always
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: Asia/Bangkok
+      # [To Edit] env variables
+      DAGSTER_POSTGRES_USER: postgres
+      DAGSTER_POSTGRES_PASSWORD: postgres
+      DAGSTER_POSTGRES_DB: dagster
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./src/my_pipeline:/opt/dagster/app/data_pipeline #  [To Edit] name of your pipeline
+      - ./dagster_io_manager_storage:/opt/dagster/io_manager_storage
