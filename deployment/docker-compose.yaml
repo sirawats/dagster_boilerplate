@@ -11,6 +11,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: dagster
+    networks:
+      - dagster_network
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
       - ./database_volume:/var/lib/postgresql/data
@@ -24,6 +26,8 @@ services:
       TZ: Asia/Bangkok
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - dagster_network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
@@ -56,6 +60,8 @@ services:
       - ../src/data_pipeline:/opt/dagster/app/data_pipeline
       - ../src/dagster_entry:/opt/dagster/app/dagster_entry
       - $HOME/dagster_io_manager_storage:/opt/dagster/io_manager_storage
+    networks:
+      - dagster_network
     depends_on:
       - postgis
 
@@ -88,8 +94,16 @@ services:
       - ../src/data_pipeline:/opt/dagster/app/data_pipeline
       - ../src/dagster_entry:/opt/dagster/app/dagster_entry
       - $HOME/dagster_io_manager_storage:/opt/dagster/io_manager_storage
+
+    networks:
+      - dagster_network
     depends_on:
       - postgis
+
+networks:
+  dagster_network:
+    driver: bridge
+    name: dagster_network
 
 volumes:
   pgadmin-data:

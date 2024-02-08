@@ -8,9 +8,9 @@ services:
     container_name: dagster_dedicated_user_code # [To Edit] Code location name
     restart: always
     expose:
-      - "3000"
+      - "4200"
     ports:
-      - "3000:3000"
+      - "4200:4200"
     environment:
       TZ: Asia/Bangkok
       # [To Edit] env variables
@@ -21,5 +21,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
-      - ./src/my_pipeline:/opt/dagster/app/data_pipeline #  [To Edit] name of your pipeline
+      - ./src/my_pipeline:/opt/dagster/app/my_pipeline #  [To Edit] name of your pipeline
       - ./dagster_io_manager_storage:/opt/dagster/io_manager_storage
+    networks:
+      - dagster_network
+
+networks:
+  dagster_network:
+    driver: bridge
+    name: dagster_network
